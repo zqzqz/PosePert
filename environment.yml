@@ -1,0 +1,25 @@
+name: advCP
+channels:
+  - defaults
+dependencies:
+  - pip==21.1.2
+  - python==3.7.11
+  - pip:
+    - matplotlib==3.4.2
+    - numpy==1.19
+    - open3d
+    - opencv-python==4.5.5.62
+    - cython
+    - pygame
+    - tensorboardX
+    - shapely==1.8.1
+    - einops
+    - cumm
+    - timm
+    - pygad==2.17.0
+    - gdown
+    - chardet
+    # AB3DMOT's Kalman tracker (mvp/tools/ab3dmot, mvp/tracking/kalman3d)
+    - filterpy==1.4.5
+    # Trajectron++ serialisation, used by the transfer evaluation
+    - dill==0.3.7

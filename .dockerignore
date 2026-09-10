@@ -1,0 +1,32 @@
+data/
+models/
+results/
+results_paper/S*
+results_paper/D*
+results_paper/E*
+results_paper/P*
+results_paper/HT*
+results_paper/PGD*
+results_paper/case_studies/
+results_paper/figures/
+*.pkl
+*.npy
+*.zip
+*.log
+*.out
+__pycache__/
+*.pyc
+.git/
+.claude/
+
+# Release archives (built artifacts, not build inputs)
+release/
+
+# Locally cloned or linked third-party repos. AdvTrajectoryPrediction and V2X-Real
+# are symlinks to a checkout outside the build context, which Docker cannot follow;
+# the Dockerfile clones them itself via WITH_GRIP / WITH_V2XREAL. third_party/CARLA
+# holds the PythonAPI agents extracted from the CARLA image and is host-specific.
+third_party/AdvTrajectoryPrediction
+third_party/V2X-Real
+third_party/HEAL
+third_party/CARLA
