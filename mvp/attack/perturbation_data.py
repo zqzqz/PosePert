@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.perception.opencood_perception import OpencoodPerception
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_network import (
     build_geometric_encoding, get_active_zone_bounds)
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
@@ -61,7 +61,7 @@ def collect_training_data(dataset, perception, n_cases=100,
     H = int((lidar_range[4] - lidar_range[1]) / voxel_size[1])
     W = int((lidar_range[3] - lidar_range[0]) / voxel_size[0])
 
-    attacker_obj = LidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    attacker_obj = PosePertAttacker(perception, dataset, beta=1.0)
 
     samples = []
     sample_idx = 0

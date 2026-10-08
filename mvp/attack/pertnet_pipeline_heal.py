@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict, OrderedDict
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.perception.heal_perception import HealPerception
-from mvp.attack.heal_attacker import HealLidarShiftVoxelwiseAttacker
+from mvp.attack.heal_attacker import HealPosePertAttacker
 from mvp.attack.perturbation_network import PerturbationNetwork, build_geometric_encoding, get_active_zone_bounds
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
 from mvp.tools.iou import iou3d
@@ -60,7 +60,7 @@ def run_beta_scan(perception, dataset, betas, n_cases=100):
     attacks = dataset.attacks
     results = {}
     for beta in betas:
-        atk = HealLidarShiftVoxelwiseAttacker(perception, dataset, beta=beta)
+        atk = HealPosePertAttacker(perception, dataset, beta=beta)
         weak, strong, ultra, total, zeros = 0, 0, 0, 0, 0
         ious = []
         for ci in range(min(n_cases * 3, len(attacks))):
@@ -129,7 +129,7 @@ def collect_training_data_heal(dataset, perception, n_cases=100,
     H = int((lidar_range[4] - lidar_range[1]) / voxel_size[1])
     W = int((lidar_range[3] - lidar_range[0]) / voxel_size[0])
 
-    attacker_obj = HealLidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    attacker_obj = HealPosePertAttacker(perception, dataset, beta=1.0)
     samples = []
     sample_idx = 0
 
@@ -462,7 +462,7 @@ def train_pertnet_heal(perception, data_dir, save_dir, best_beta,
 def eval_pertnet_heal(perception, dataset, net, best_beta, model_tag,
                       n_cases=300, save_dir='results'):
     attacks = dataset.attacks
-    atk_obj = HealLidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    atk_obj = HealPosePertAttacker(perception, dataset, beta=1.0)
     device = perception.device
     lr = np.array(perception.cav_lidar_range)
     vs = np.array(perception.voxel_size)
@@ -539,7 +539,7 @@ def eval_pertnet_heal(perception, dataset, net, best_beta, model_tag,
 
             pa_pn, _ = atk_obj._run_with_features(bd, F_attack)
 
-            atk_beta = HealLidarShiftVoxelwiseAttacker(perception, dataset, beta=best_beta)
+            atk_beta = HealPosePertAttacker(perception, dataset, beta=best_beta)
             r_beta = atk_beta.run_multi_vehicle(frame, {
                 'attacker_vehicle_id': ai, 'victim_vehicle_id': vi,
                 'bbox_to_remove': bo, 'bbox_to_spoof': bt})

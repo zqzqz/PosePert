@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.attack.scenario_shift_movein_attacker import ScenarioShiftMoveinAttacker
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_train import build_perception, _apply_warp_patches
 from mvp.data.util import bbox_sensor_to_map
 from mvp.visualize.general import draw_trajectories
@@ -219,7 +219,7 @@ def main():
         perception.model.eval()
         for p in perception.model.parameters():
             p.requires_grad = False
-        perception_attacker = LidarShiftVoxelwiseAttacker(
+        perception_attacker = PosePertAttacker(
             perception, dataset, beta=cfg['beta'])
 
         # Load PertNet checkpoint

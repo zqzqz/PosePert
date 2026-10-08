@@ -18,7 +18,6 @@ and the closed-loop CARLA study.
 | **[docs/INSTALL.md](docs/INSTALL.md)** | environment, datasets, release archives, verification |
 | **[docs/EXPERIMENTS.md](docs/EXPERIMENTS.md)** | what to run to reproduce each table and figure |
 | [carla_demo/SETUP.md](carla_demo/SETUP.md) | CARLA server and client for the closed-loop study |
-| [third_party/patches/README.md](third_party/patches/README.md) | the V2X-Real fix and why it is required |
 
 ```bash
 bash scripts/setup.sh          # or: docker build -t posepert .
@@ -52,7 +51,7 @@ AttFusion on V2X-Real, plus a closed-loop CARLA study of both scenario outcomes.
 ```
 mvp/
 ├── attack/
-│   ├── lidar_shift_voxelwise_attacker.py   the voxelwise feature attack
+│   ├── posepert_attacker.py                PosePert, the voxelwise feature attack
 │   ├── perturbation_network.py             PertNet architecture
 │   ├── perturbation_train.py               PertNet training, build_perception()
 │   ├── pertnet_pipeline*.py                beta scan -> collect -> train -> eval
@@ -60,9 +59,9 @@ mvp/
 │   └── scenario_attacker.py                multi-frame scenario planner
 ├── defense/
 │   ├── perception_defender.py   CAD, occupancy consistency
-│   ├── lucia/                   LUCIA, global and local (PoseGuard)
+│   ├── lucia/                   LUCIA, global and local (PoseGuard's anomaly score)
 │   ├── made/                    MADE residual autoencoder, global and local
-│   └── integrated_defender.py   combined pipeline
+│   └── poseguard_defender.py    PoseGuard, the combined defense pipeline
 ├── perception/                  OpenCOOD and HEAL wrappers, CUDA IoU operator
 ├── prediction/                  GRIP++ and Trajectron++ interfaces
 ├── tracking/                    AB3DMOT
@@ -81,6 +80,6 @@ test/           experiment entry points and unit-style checks
 results_paper/  scenario attack runner and all figure generation
 carla_demo/     closed-loop CARLA study (separate environment)
 scripts/        setup, download, link_local_data, check_artifact, make_release
-third_party/    OpenCOOD, SqueezeSegV3, patches for V2X-Real
+third_party/    git submodules (OpenCOOD, SqueezeSegV3, AdvTrajectoryPrediction, V2X-Real)
 docs/           installation and experiment guides
 ```

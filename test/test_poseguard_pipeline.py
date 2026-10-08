@@ -1,5 +1,5 @@
 """
-Example: Run the integrated PoseGuard defense pipeline.
+Example: Run the full PoseGuard defense pipeline.
 
 Demonstrates the full defense:
   1. Run fused perception (collaborative) and ego-only perception
@@ -9,17 +9,17 @@ Demonstrates the full defense:
   5. Fallback to ego-only detection if anomalous
 
 Usage:
-  CUDA_VISIBLE_DEVICES=0 python test/test_integrated_defense.py
+  CUDA_VISIBLE_DEVICES=0 python test/test_poseguard_pipeline.py
 """
 import os, sys, pickle, copy, numpy as np, torch
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_train import build_perception, _apply_warp_patches
 from mvp.attack.perturbation_network import PerturbationNetwork
-from mvp.defense.integrated_defender import IntegratedDefender, LinearPredictor
+from mvp.defense.poseguard_defender import PoseGuardDefender, LinearPredictor
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
 from mvp.tools.iou import iou3d
 from mvp.util import set_seed
@@ -36,7 +36,7 @@ def main():
         test_cases = pickle.load(f)
 
     # Setup attacker with PertNet
-    atk = LidarShiftVoxelwiseAttacker(perception, dataset, beta=2.0)
+    atk = PosePertAttacker(perception, dataset, beta=2.0)
     pertnet_path = 'models/perturbation_net_paper_pointpillar/perturbation_net_ep35.pt'
     if os.path.exists(pertnet_path):
         ckpt = torch.load(pertnet_path, map_location='cpu')
@@ -48,8 +48,8 @@ def main():
         atk.pertnet = pertnet
         atk.pertnet_epsilon = 10.0
 
-    # Setup integrated defender
-    defender = IntegratedDefender(
+    # Setup PoseGuard defender
+    defender = PoseGuardDefender(
         perception,
         safety_threshold=5.0,        # objects within 5m are critical
         anomaly_threshold=0.5,        # local anomaly above this triggers alert
@@ -98,7 +98,7 @@ def main():
         else:
             iou_atk = 0.0
 
-        # --- Attack with integrated defense ---
+        # --- Attack with PoseGuard defense ---
         # Create attacked frame (inject spoofed point cloud)
         frame_attacked = copy.deepcopy(frame)
         frame_attacked[ai]['lidar'] = cached['spoof_pcd']
@@ -140,7 +140,7 @@ def main():
 
     # --- Summary ---
     print(f"\n{'='*60}")
-    print(f"Integrated Defense Summary ({n_total} cases)")
+    print(f"PoseGuard Defense Summary ({n_total} cases)")
     print(f"{'='*60}")
     print(f"  Attacks detected:   {n_detected}/{n_total} ({100*n_detected/max(n_total,1):.0f}%)")
     print(f"  Fallbacks applied:  {n_fallback}/{n_total} ({100*n_fallback/max(n_total,1):.0f}%)")

@@ -28,7 +28,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git wget curl ca-certificates unzip \
+    git wget curl ca-certificates unzip patch \
     build-essential cmake \
     libgl1-mesa-glx libglib2.0-0 libsm6 libxrender1 libxext6 \
     && rm -rf /var/lib/apt/lists/*
@@ -81,7 +81,11 @@ COPY . /workspace/PosePert
 # CUDA does not ship. Nothing the artifact evaluates needs them -- they are imported only
 # by sub_modules/vsa.py, the FPV-RCNN voxel set abstraction -- and the reference install
 # has never had them built either. So let that build fail and assert on what must exist.
+# The OpenCOOD patch adds the trust_score argument LUCIA passes to AttFusion and a
+# stub for a noise module upstream imports but does not ship. `patch` rather than
+# `git apply`: .git/ is not in the build context, so the submodule's gitdir dangles.
 RUN cd third_party/OpenCOOD \
+    && patch -p1 < ../patches/opencood-trust-score.patch \
     && pip install --no-cache-dir -e . \
     && python opencood/utils/setup.py build_ext --inplace \
     && { python opencood/pcdet_utils/setup.py build_ext --inplace || \

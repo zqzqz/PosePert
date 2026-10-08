@@ -148,9 +148,7 @@ dmypy.json
 # Internal submission checklist, not part of the released artifact
 /SUBMISSION.md
 
-# External repos: cloned or linked locally, see README section 3
-/third_party/V2X-Real
-/third_party/AdvTrajectoryPrediction
+# External repos that are not submodules: cloned or linked locally
 /third_party/HEAL
 /third_party/CARLA
 

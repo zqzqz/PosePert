@@ -39,6 +39,7 @@ conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 \
 pip install spconv-cu116
 
 cd third_party/OpenCOOD
+git apply ../patches/opencood-trust-score.patch
 pip install -e .
 python opencood/utils/setup.py build_ext --inplace
 python opencood/pcdet_utils/setup.py build_ext --inplace
@@ -51,17 +52,30 @@ cd mvp/perception/cuda_op && python setup.py install && cd ../../..
 
 ### External repositories
 
-`third_party/OpenCOOD` and `third_party/SqueezeSegV3` are vendored. Two more are
-too large to ship:
+All four external repositories are git submodules under `third_party/`, pinned
+to the commits the experiments were run with. `git clone --recursive` fetches
+them; in an existing clone run:
 
 ```bash
-# GRIP++ model code. Required for ALL scenario-level experiments, not just
-# the transfer evaluation -- the GRIP++ implementation itself lives here.
-git clone https://github.com/zqzqz/AdvTrajectoryPrediction.git \
-    third_party/AdvTrajectoryPrediction
+git submodule update --init --recursive
+```
 
-# V2X-Real dataset API. Required only for the V2X-Real setting.
-git clone https://github.com/ucla-mobility/V2X-Real.git third_party/V2X-Real
+| Submodule | Needed for |
+|---|---|
+| `OpenCOOD` | perception backbones (everything) |
+| `SqueezeSegV3` | LiDAR segmentation used by CAD |
+| `AdvTrajectoryPrediction` | GRIP++ model code, required for ALL scenario-level experiments |
+| `V2X-Real` | V2X-Real dataset API, only for the V2X-Real setting |
+
+Two of them need small local changes, kept as patches in `third_party/patches/`.
+The OpenCOOD patch is applied in the install steps above (and by
+`scripts/setup.sh`): it adds the `trust_score` argument that the LUCIA defense
+passes to `AttFusion`, and a stub for `sub_modules/noise.py`, which upstream
+imports but does not ship.
+
+V2X-Real needs one extra step after checkout:
+
+```bash
 cd third_party/V2X-Real
 pip install -e .
 git apply ../patches/v2x-real-ego-id.patch
@@ -72,8 +86,8 @@ cp third_party/patches/point_pillar_intermediate_fusion_*.yaml \
 
 The V2X-Real patch is **required**, not optional. Upstream uses `ego_id = -1` as a
 "not found yet" sentinel and then asserts on it, but V2X-Real gives vehicle agents
-negative IDs, so any scene whose ego is vehicle `-1` trips the assertion. See
-[third_party/patches/README.md](../third_party/patches/README.md).
+negative IDs, so any scene whose ego is vehicle `-1` trips the assertion. The patch replaces
+the sentinel with `None`.
 
 ---
 
@@ -207,7 +221,8 @@ PosePert/
 │   ├── perturbation_net_paper_*/    trained PertNet per setting
 │   ├── MADE/, SqueezeSegV3/         defense models
 │   └── GRIP/, Trajectron/           trajectory predictors
-└── third_party/                     OpenCOOD, SqueezeSegV3, patches (+ 2 cloned)
+└── third_party/                     submodules: OpenCOOD, SqueezeSegV3,
+                                     AdvTrajectoryPrediction, V2X-Real; patches/
 ```
 
 ## Troubleshooting

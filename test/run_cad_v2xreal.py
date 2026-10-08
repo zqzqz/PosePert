@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "third_party", 
 root = os.path.join(os.path.dirname(__file__), "..")
 
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_train import _apply_warp_patches
 from mvp.perception.opencood_perception import OpencoodPerception
 from mvp.defense.perception_defender import PerceptionDefender

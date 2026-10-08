@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.perception.opencood_perception import OpencoodPerception
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_network import PerturbationNetwork, build_geometric_encoding, get_active_zone_bounds
 from mvp.attack.perturbation_train import compute_attack_loss
 from mvp.attack.shift_rotation import sample_shift_rotation
@@ -64,7 +64,7 @@ def run_beta_scan(perception, dataset, betas, n_cases=50):
     results = {}
 
     for beta in betas:
-        atk = LidarShiftVoxelwiseAttacker(perception, dataset, beta=beta)
+        atk = PosePertAttacker(perception, dataset, beta=beta)
         weak, strong, ultra, total, zeros = 0, 0, 0, 0, 0
         ious = []
 
@@ -135,7 +135,7 @@ def run_beta_scan(perception, dataset, betas, n_cases=50):
 def collect_training_data(dataset, perception, n_cases=200, save_dir='data/perturbation_train_v2xreal'):
     """Collect PertNet training data from V2X-Real with V2V filtering."""
     os.makedirs(save_dir, exist_ok=True)
-    atk = LidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    atk = PosePertAttacker(perception, dataset, beta=1.0)
     attacks = dataset.attacks
     saved = 0
 

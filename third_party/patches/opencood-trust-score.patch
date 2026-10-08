@@ -1,0 +1,68 @@
+diff --git a/opencood/models/fuse_modules/self_attn.py b/opencood/models/fuse_modules/self_attn.py
+index b2278d5..9733623 100644
+--- a/opencood/models/fuse_modules/self_attn.py
++++ b/opencood/models/fuse_modules/self_attn.py
+@@ -36,9 +36,18 @@ class ScaledDotProductAttention(nn.Module):
+         super(ScaledDotProductAttention, self).__init__()
+         self.sqrt_dim = np.sqrt(dim)
+ 
+-    def forward(self, query, key, value):
++    def forward(self, query, key, value, trust_score=None):
+         score = torch.bmm(query, key.transpose(1, 2)) / self.sqrt_dim
++        if trust_score is not None:
++            # Pre-softmax: multiply by trust scores to downweight suspicious agents
++            if trust_score.dim() == 1:
++                trust_score = trust_score.unsqueeze(0).unsqueeze(0)  # (1, 1, N)
++            score = score * trust_score
+         attn = F.softmax(score, -1)
++        if trust_score is not None:
++            # Post-softmax: re-weight and renormalize
++            attn = attn * trust_score
++            attn = attn / (attn.sum(dim=-1, keepdim=True) + 1e-8)
+         context = torch.bmm(attn, value)
+         return context
+ 
+@@ -48,14 +57,14 @@ class AttFusion(nn.Module):
+         super(AttFusion, self).__init__()
+         self.att = ScaledDotProductAttention(feature_dim)
+ 
+-    def forward(self, x, record_len):
++    def forward(self, x, record_len, trust_score=None):
+         split_x = self.regroup(x, record_len)
+         C, W, H = split_x[0].shape[1:]
+         out = []
+         for xx in split_x:
+             cav_num = xx.shape[0]
+             xx = xx.view(cav_num, C, -1).permute(2, 0, 1)
+-            h = self.att(xx, xx, xx)
++            h = self.att(xx, xx, xx, trust_score=trust_score)
+             h = h.permute(1, 2, 0).view(cav_num, C, W, H)[0, ...]
+             out.append(h)
+         return torch.stack(out)
+@@ -64,3 +73,9 @@ class AttFusion(nn.Module):
+         cum_sum_len = torch.cumsum(record_len, dim=0)
+         split_x = torch.tensor_split(x, cum_sum_len[:-1].cpu())
+         return split_x
++
++
++def regroup(x, record_len):
++    cum_sum_len = torch.cumsum(record_len, dim=0)
++    split_x = torch.tensor_split(x, cum_sum_len[:-1].cpu())
++    return split_x
+diff --git a/opencood/models/sub_modules/noise.py b/opencood/models/sub_modules/noise.py
+new file mode 100644
+index 0000000..a3a65a0
+--- /dev/null
++++ b/opencood/models/sub_modules/noise.py
+@@ -0,0 +1,11 @@
++# Stub for missing noise module
++import torch
++
++def data_dropout(x, *args, **kwargs):
++    return x
++
++def data_dropout_uniform(x, *args, **kwargs):
++    return x
++
++def transmission_with_noise(x, *args, **kwargs):
++    return x

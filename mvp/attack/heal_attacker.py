@@ -1,6 +1,6 @@
 """
 HEAL-compatible attacker: overrides model-specific methods
-from LidarShiftVoxelwiseAttacker to work with HEAL's encoder structure.
+from PosePertAttacker to work with HEAL's encoder structure.
 
 Key difference from base: HEAL voxelizes each vehicle's PCD in its OWN frame
 (proj_first=false), so zone masks must be in the attacker's frame, not ego frame.
@@ -12,19 +12,19 @@ import torch
 import numpy as np
 from collections import OrderedDict, Counter
 
-from .lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from .posepert_attacker import PosePertAttacker
 from mvp.util import set_seed
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
 from opencood.utils import box_utils
 
 
-class HealLidarShiftVoxelwiseAttacker(LidarShiftVoxelwiseAttacker):
+class HealPosePertAttacker(PosePertAttacker):
     def __init__(self, perception, dataset=None, beta=4.0, gamma=0.0,
                  extension=1.0, multiview=True, bases_dir=None, debug=False):
         self.dataset = dataset
         self.name = "lidar_shift"
         self.load_benchmark_meta()
-        self.name = "lidar_shift_voxelwise"
+        self.name = "posepert"
         self.name += f"_b{beta:.0f}"
         if gamma > 0:
             self.name += f"_g{gamma:.0f}"

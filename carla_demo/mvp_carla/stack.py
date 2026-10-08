@@ -8,7 +8,7 @@ from .config import (OBS_LEN, PRED_LEN, DT, STEALTH, MAX_OFFSET, PLAN_GRID, BETA
                      LOOKAHEAD, ACC_S0, ACC_TGAP, ACC_KGAP, PERTNET_CKPT)
 
 from mvp.perception.opencood_perception import OpencoodPerception
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.tools.object_tracking import Ab3dmotTracker
 from mvp.attack.scenario_attacker_util import tracking_ab3dmot, prediction_grip
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
@@ -46,7 +46,7 @@ def load_pertnet(perception):
 def build_attacker(perception, beta=None, use_pertnet=True):
     """Full PosePert perception attack = ray-cast init + beta scaling + PertNet correction.
     Faithful default: beta=2 + PertNet (beta>3 corrupts features; PertNet ~doubles the IoU at 1 m)."""
-    atk = LidarShiftVoxelwiseAttacker(perception=perception, beta=beta if beta is not None else BETA)
+    atk = PosePertAttacker(perception=perception, beta=beta if beta is not None else BETA)
     if use_pertnet:
         net, paper_beta = load_pertnet(perception)
         atk.pertnet = net

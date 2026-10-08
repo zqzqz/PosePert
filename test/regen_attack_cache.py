@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.perception.opencood_perception import OpencoodPerception
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.data.util import sort_lidar_points
 from mvp.attack.shift_rotation import apply_shift
 
@@ -55,7 +55,7 @@ def main():
     perception = OpencoodPerception(
         fusion_method='intermediate', model_name='pointpillar', dataset_name='V2X-Real')
     dataset = OPV2VDataset(root_path='data/V2X-Real', mode='test', dataset_name='V2X-Real')
-    attacker = LidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    attacker = PosePertAttacker(perception, dataset, beta=1.0)
 
     t_start = time.time()
     n_done = 0

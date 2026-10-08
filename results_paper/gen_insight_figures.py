@@ -27,7 +27,7 @@ sys.path.insert(0, 'test')
 
 from mvp.perception.opencood_perception import OpencoodPerception
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.defense.perception_defender import PerceptionDefender
 from mvp.tools.polygon_space import bbox_to_polygon
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor, pcd_sensor_to_map
@@ -334,7 +334,7 @@ def main():
     perception = OpencoodPerception(
         fusion_method='intermediate', model_name='pointpillar', dataset_name='OPV2V')
     dataset = OPV2VDataset(root_path='data/OPV2V', mode='test', dataset_name='OPV2V')
-    voxel_attacker = LidarShiftVoxelwiseAttacker(perception, dataset, beta=2.0)
+    voxel_attacker = PosePertAttacker(perception, dataset, beta=2.0)
 
     # Load test cases
     with open('data/OPV2V/attack/lidar_shift.pkl', 'rb') as f:

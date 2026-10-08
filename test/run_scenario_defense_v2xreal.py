@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 root = os.path.join(os.path.dirname(__file__), "..")
 
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.perception.opencood_perception import OpencoodPerception
 from mvp.defense.lucia.lucia import LuciaDefender
 from mvp.defense.lucia.local_lucia import LocalLuciaDefender
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     device = perception.device
     dataset = OPV2VDataset(root_path=os.path.join(root, 'data/V2X-Real'),
                            mode='test', dataset_name='V2X-Real')
-    atk_obj = LidarShiftVoxelwiseAttacker(perception, dataset, beta=BETA)
+    atk_obj = PosePertAttacker(perception, dataset, beta=BETA)
 
     # Load PertNet
     from mvp.attack.perturbation_network import PerturbationNetwork

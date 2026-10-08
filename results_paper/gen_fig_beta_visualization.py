@@ -27,7 +27,7 @@ from matplotlib.patches import Polygon as MplPolygon
 
 from mvp.attack.perturbation_train import build_perception, _apply_warp_patches
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
 from mvp.tools.iou import iou3d
 from mvp.util import set_seed
@@ -115,7 +115,7 @@ def run_experiment(case_indices=None):
         for beta_val in BETAS:
             logger.info(f"  beta={beta_val}")
             set_seed(42)
-            atk = LidarShiftVoxelwiseAttacker(perception, dataset, beta=beta_val)
+            atk = PosePertAttacker(perception, dataset, beta=beta_val)
             result = atk.run_multi_vehicle(frame, {
                 'attacker_vehicle_id': ai,
                 'victim_vehicle_id': vi,

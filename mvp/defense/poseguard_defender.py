@@ -1,5 +1,5 @@
 """
-Integrated defense: safety-aware anomaly detection with ego fallback.
+PoseGuard defense: safety-aware anomaly detection with ego fallback.
 
 Pipeline:
   1. Safety Estimator — identify critical objects using GT ego future trajectory
@@ -193,7 +193,7 @@ class SafetyEstimator:
         return critical_indices, safety_scores
 
 
-class IntegratedDefender:
+class PoseGuardDefender:
     """
     Combined defense pipeline:
       1. Fused + ego perception
@@ -259,7 +259,7 @@ class IntegratedDefender:
     def defend(self, multi_vehicle_case, ego_id, ego_future_traj=None,
                ego_velocity=None):
         """
-        Run the full integrated defense.
+        Run the full PoseGuard defense.
 
         Args:
             multi_vehicle_case: dict of vehicle data for one frame

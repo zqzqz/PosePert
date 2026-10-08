@@ -1,0 +1,16 @@
+[submodule "third_party/OpenCOOD"]
+	path = third_party/OpenCOOD
+	url = https://github.com/DerrickXuNu/OpenCOOD.git
+	ignore = all
+[submodule "third_party/SqueezeSegV3"]
+	path = third_party/SqueezeSegV3
+	url = https://github.com/zqzqz/SqueezeSegV3.git
+	branch = mvp
+	ignore = all
+[submodule "third_party/AdvTrajectoryPrediction"]
+	path = third_party/AdvTrajectoryPrediction
+	url = https://github.com/zqzqz/AdvTrajectoryPrediction.git
+	ignore = all
+[submodule "third_party/V2X-Real"]
+	path = third_party/V2X-Real
+	url = https://github.com/ucla-mobility/V2X-Real.git

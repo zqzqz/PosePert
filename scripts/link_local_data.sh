@@ -149,12 +149,15 @@ link "models/GRIP/V2X-Real/checkpoint.pt" "models/GRIP/V2X-Real/checkpoint.pt"
 link "models/Trajectron/OPV2V"          "models/Trajectron/OPV2V"          # transfer eval
 
 echo "== third_party: large external repos =="
-# OpenCOOD and SqueezeSegV3 are vendored in the artifact. These two are too big
-# to vendor (1.3 GB / 323 MB), so link the local working copies. A fresh clone
-# also works, but V2X-Real then needs third_party/patches applied first.
+# All of these are git submodules. If a submodule checkout is already present it
+# is left alone; otherwise link the local working copy from the parent repo. A
+# fresh V2X-Real checkout needs third_party/patches applied first.
 PARENT="$(dirname "$DST")"
 for repo in V2X-Real AdvTrajectoryPrediction; do
-    if [ -d "$PARENT/third_party/$repo" ]; then
+    if [ -e "$DST/third_party/$repo/.git" ]; then
+        echo "  present  third_party/$repo (submodule)"
+        n_ok=$((n_ok + 1))
+    elif [ -d "$PARENT/third_party/$repo" ]; then
         ln -sfn "$PARENT/third_party/$repo" "$DST/third_party/$repo"
         echo "  linked   third_party/$repo"
         n_ok=$((n_ok + 1))

@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.perception.opencood_perception import OpencoodPerception
 from mvp.attack.scenario_shift_movein_attacker import ScenarioShiftMoveinAttacker
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.data.util import bbox_sensor_to_map
 
 HISTORY_FRAMES = 20
@@ -59,7 +59,7 @@ def main():
         model_name='pointpillar',
         dataset_name='V2X-Real',
     )
-    voxel_attacker = LidarShiftVoxelwiseAttacker(
+    voxel_attacker = PosePertAttacker(
         perception, dataset, beta=1.2)
 
     attacker = ScenarioShiftMoveinAttacker(

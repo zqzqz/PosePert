@@ -34,7 +34,7 @@ from matplotlib.lines import Line2D
 
 from mvp.attack.perturbation_train import build_perception, _apply_warp_patches
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_network import (
     PerturbationNetwork, build_geometric_encoding, get_active_zone_bounds)
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
@@ -172,7 +172,7 @@ def run_experiment(case_indices=None):
         results = {}
 
         # --- Stage 1: Ray-cast only (beta=1, no PertNet) ---
-        atk1 = LidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+        atk1 = PosePertAttacker(perception, dataset, beta=1.0)
         res1 = atk1.run_multi_vehicle(frame, atk_opts_common)
         det1, iou1, sc1 = find_best_detection(
             res1['pred_bboxes'], res1['pred_scores'], bbox_tgt_ego)
@@ -189,7 +189,7 @@ def run_experiment(case_indices=None):
         logger.info(f"  Ray-cast: IoU={iou1:.3f}")
 
         # --- Stage 2: beta scaling (beta=2.0, no PertNet) ---
-        atk2 = LidarShiftVoxelwiseAttacker(perception, dataset, beta=2.0)
+        atk2 = PosePertAttacker(perception, dataset, beta=2.0)
         res2 = atk2.run_multi_vehicle(frame, atk_opts_common)
         det2, iou2, sc2 = find_best_detection(
             res2['pred_bboxes'], res2['pred_scores'], bbox_tgt_ego)
@@ -206,7 +206,7 @@ def run_experiment(case_indices=None):
         logger.info(f"  Beta=2.0: IoU={iou2:.3f}")
 
         # --- Stage 3: beta=2.0 + PertNet ---
-        atk3 = LidarShiftVoxelwiseAttacker(perception, dataset, beta=2.0)
+        atk3 = PosePertAttacker(perception, dataset, beta=2.0)
         atk3.pertnet = pertnet
         res3 = atk3.run_multi_vehicle(frame, atk_opts_common)
         det3, iou3, sc3 = find_best_detection(

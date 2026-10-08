@@ -1,5 +1,5 @@
 """
-Voxel-wise feature manipulation attacker for object shifting.
+PosePert: voxel-wise feature manipulation attacker for object shifting.
 
 Instead of gradient-based optimization, this attacker:
 1. Constructs multi-view F_spoof and F_remove from precomputed point cloud bases
@@ -30,7 +30,7 @@ from mvp.attack.shift_rotation import apply_shift
 from mvp.util import set_seed
 
 
-class LidarShiftVoxelwiseAttacker(Attacker):
+class PosePertAttacker(Attacker):
     def __init__(self, perception, dataset=None, beta=4.0, gamma=0.0,
                  extension=1.0, multiview=True, bases_dir=None, debug=False):
         """
@@ -51,7 +51,7 @@ class LidarShiftVoxelwiseAttacker(Attacker):
         self.dataset = dataset
         self.name = "lidar_shift"
         self.load_benchmark_meta()
-        self.name = "lidar_shift_voxelwise"
+        self.name = "posepert"
 
         self.name += f"_b{beta:.0f}"
         if gamma > 0:

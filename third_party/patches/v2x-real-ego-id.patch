@@ -1,0 +1,22 @@
+diff --git a/opencood/data_utils/datasets/late_fusion_dataset.py b/opencood/data_utils/datasets/late_fusion_dataset.py
+index e6dbba3..05747f4 100644
+--- a/opencood/data_utils/datasets/late_fusion_dataset.py
++++ b/opencood/data_utils/datasets/late_fusion_dataset.py
+@@ -130,7 +130,7 @@ class LateFusionDataset(basedataset.BaseDataset):
+ 
+     def get_item_test(self, base_data_dict):
+         processed_data_dict = OrderedDict()
+-        ego_id = -1
++        ego_id = None
+         ego_lidar_pose = []
+ 
+         # first find the ego vehicle's lidar pose
+@@ -140,7 +140,7 @@ class LateFusionDataset(basedataset.BaseDataset):
+                 ego_lidar_pose = cav_content['params']['lidar_pose']
+                 break
+ 
+-        assert ego_id != -1
++        assert ego_id is not None
+         assert len(ego_lidar_pose) > 0
+ 
+         # loop over all CAVs to process information

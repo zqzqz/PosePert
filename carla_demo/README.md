@@ -62,7 +62,7 @@ per-frame stealth bound, so GRIP++ extrapolates a cut-in and the ACC brakes.
   (observe-predict-plan, re-planned every frame, capped at `MAX_OFFSET`). This is a query-based
   approximation of mvp's `ScenarioAttacker`.
 - **Faithful realization** (`build_attacker`): the planned offset is realized through the real
-  `LidarShiftVoxelwiseAttacker.run_multi_vehicle` (ray-cast init + **beta=2** feature scaling +
+  `PosePertAttacker.run_multi_vehicle` (ray-cast init + **beta=2** feature scaling +
   **PertNet** learned per-voxel correction), which perturbs the collaborator's *shared feature map*.
   This is the paper-faithful attack — `beta>3` corrupts features; PertNet ~doubles the IoU at a 1 m
   shift. `run_*.py --beta B` overrides beta for ablation.
@@ -95,7 +95,7 @@ with `python sweep_variants.py`.
 ## What is real vs approximated
 
 - **Real:** AttFusion perception (OPV2V-trained, no retraining), AB3DMOT, GRIP++, and the voxelwise
-  feature attack (`LidarShiftVoxelwiseAttacker`). The adversarial trajectory is online-optimized
+  feature attack (`PosePertAttacker`). The adversarial trajectory is online-optimized
   against GRIP within the per-frame stealth bound.
 - **Approximated:** the OPV2V→CARLA domain transfer (sensor matched, ~0.6 recall); the attack
   realizes the planned shift only partially/noisily → the outcome is **probabilistic** (a danger

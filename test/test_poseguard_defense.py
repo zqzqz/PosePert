@@ -15,7 +15,7 @@ import os, sys, pickle, numpy as np, torch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_train import build_perception, _apply_warp_patches
 from mvp.attack.perturbation_network import PerturbationNetwork
 from mvp.defense.lucia.lucia import LuciaDefender
@@ -39,7 +39,7 @@ def main():
     lucia_local = LocalLuciaDefender(perception)
 
     # Load PertNet for full attack
-    atk = LidarShiftVoxelwiseAttacker(perception, dataset, beta=2.0)
+    atk = PosePertAttacker(perception, dataset, beta=2.0)
     pertnet_path = 'models/perturbation_net_paper_pointpillar/perturbation_net_ep35.pt'
     if os.path.exists(pertnet_path):
         ckpt = torch.load(pertnet_path, map_location='cpu')

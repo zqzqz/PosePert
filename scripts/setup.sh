@@ -25,6 +25,9 @@ cd -
 
 echo "Setting up OpenCOOD ..."
 cd third_party/OpenCOOD
+# apply the local OpenCOOD patch unless it is already applied
+git apply ../patches/opencood-trust-score.patch 2>/dev/null \
+    || git apply -R --check ../patches/opencood-trust-score.patch
 conda run --live-stream -n $env_name python opencood/utils/setup.py build_ext --inplace
 conda run --live-stream -n $env_name python opencood/pcdet_utils/setup.py build_ext --inplace
 cd -

@@ -22,8 +22,8 @@ __pycache__/
 # Release archives (built artifacts, not build inputs)
 release/
 
-# Locally cloned or linked third-party repos. AdvTrajectoryPrediction and V2X-Real
-# are symlinks to a checkout outside the build context, which Docker cannot follow;
+# Optional third-party repos. AdvTrajectoryPrediction and V2X-Real are large
+# submodules that not every image needs, so they stay out of the build context and
 # the Dockerfile clones them itself via WITH_GRIP / WITH_V2XREAL. third_party/CARLA
 # holds the PythonAPI agents extracted from the CARLA image and is host-specific.
 third_party/AdvTrajectoryPrediction

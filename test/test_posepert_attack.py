@@ -14,7 +14,7 @@ import os, sys, pickle, copy, numpy as np, torch
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from mvp.data.opv2v_dataset import OPV2VDataset
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_train import build_perception, _apply_warp_patches
 from mvp.attack.perturbation_network import PerturbationNetwork
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
@@ -64,7 +64,7 @@ def main():
 
     # --- Stage 1: Ray-cast only (beta=1) ---
     print("\n=== Stage 1: Ray-cast (beta=1) ===")
-    atk1 = LidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    atk1 = PosePertAttacker(perception, dataset, beta=1.0)
     result1 = atk1.run_multi_vehicle(frame, {
         'attacker_vehicle_id': ai, 'victim_vehicle_id': vi,
         'bbox_to_remove': bbox_orig, 'bbox_to_spoof': bbox_tgt,
@@ -79,7 +79,7 @@ def main():
 
     # --- Stage 2: Beta-scaled (beta=2.0) ---
     print("\n=== Stage 2: +Beta scaling (beta=2.0) ===")
-    atk2 = LidarShiftVoxelwiseAttacker(perception, dataset, beta=2.0)
+    atk2 = PosePertAttacker(perception, dataset, beta=2.0)
     result2 = atk2.run_multi_vehicle(frame, {
         'attacker_vehicle_id': ai, 'victim_vehicle_id': vi,
         'bbox_to_remove': bbox_orig, 'bbox_to_spoof': bbox_tgt,
@@ -94,7 +94,7 @@ def main():
 
     # --- Stage 3: Full attack with PertNet ---
     print("\n=== Stage 3: +PertNet ===")
-    atk3 = LidarShiftVoxelwiseAttacker(perception, dataset, beta=2.0)
+    atk3 = PosePertAttacker(perception, dataset, beta=2.0)
     pertnet_path = 'models/perturbation_net_paper_pointpillar/perturbation_net_ep35.pt'
     if os.path.exists(pertnet_path):
         ckpt = torch.load(pertnet_path, map_location='cpu')

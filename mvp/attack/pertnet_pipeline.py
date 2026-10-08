@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.perception.opencood_perception import OpencoodPerception
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_network import PerturbationNetwork, build_geometric_encoding, get_active_zone_bounds
 from mvp.attack.perturbation_data import collect_training_data, PerturbationDataset
 from mvp.attack.perturbation_train import build_perception, compute_attack_loss, _apply_warp_patches, _restore_warp_patches
@@ -63,7 +63,7 @@ def run_beta_scan(perception, dataset, betas, n_cases=100):
     results = {}
 
     for beta in betas:
-        atk = LidarShiftVoxelwiseAttacker(perception, dataset, beta=beta)
+        atk = PosePertAttacker(perception, dataset, beta=beta)
         weak, strong, ultra, total, zeros = 0, 0, 0, 0, 0
         ious = []
 
@@ -194,7 +194,7 @@ def train_pertnet(perception, dataset, data_dir, save_dir, best_beta, epochs=50)
 def eval_pertnet(perception, dataset, net, best_beta, n_cases=300, save_dir='results'):
     """Full evaluation with all metrics."""
     attacks = dataset.attacks
-    atk_obj = LidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    atk_obj = PosePertAttacker(perception, dataset, beta=1.0)
     device = perception.device
     lr = perception.dataset.pre_processor.params["cav_lidar_range"]
     vs = perception.dataset.pre_processor.params["args"]["voxel_size"]
@@ -273,7 +273,7 @@ def eval_pertnet(perception, dataset, net, best_beta, n_cases=300, save_dir='res
             pa_pn, _ = atk_obj._run_with_features(bd, F_attack)
 
             # Beta baseline
-            atk_beta = LidarShiftVoxelwiseAttacker(perception, dataset, beta=best_beta)
+            atk_beta = PosePertAttacker(perception, dataset, beta=best_beta)
             r_beta = atk_beta.run_multi_vehicle(frame, {
                 'attacker_vehicle_id': ai, 'victim_vehicle_id': vi,
                 'bbox_to_remove': bo, 'bbox_to_spoof': bt})

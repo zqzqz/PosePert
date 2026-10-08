@@ -14,7 +14,7 @@ root = os.path.join(os.path.dirname(__file__), "..")
 
 from mvp.data.opv2v_dataset import OPV2VDataset
 from mvp.perception.opencood_perception import OpencoodPerception
-from mvp.attack.lidar_shift_voxelwise_attacker import LidarShiftVoxelwiseAttacker
+from mvp.attack.posepert_attacker import PosePertAttacker
 from mvp.attack.perturbation_network import PerturbationNetwork, build_geometric_encoding, get_active_zone_bounds
 from mvp.attack.perturbation_train import build_perception, _apply_warp_patches
 from mvp.data.util import bbox_sensor_to_map, bbox_map_to_sensor
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     device = perception.device
 
     dataset = OPV2VDataset(root_path=data_path, mode='test', dataset_name=args.dataset)
-    atk_obj = LidarShiftVoxelwiseAttacker(perception, dataset, beta=1.0)
+    atk_obj = PosePertAttacker(perception, dataset, beta=1.0)
 
     lr = perception.dataset.pre_processor.params["cav_lidar_range"]
     vs = perception.dataset.pre_processor.params["args"]["voxel_size"]
