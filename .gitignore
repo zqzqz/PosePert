@@ -148,9 +148,13 @@ dmypy.json
 # Internal submission checklist, not part of the released artifact
 /SUBMISSION.md
 
-# External repos that are not submodules: cloned or linked locally
-/third_party/HEAL
-/third_party/CARLA
+# third_party holds only the submodules (see .gitmodules) and patches/. Anything
+# else there (HEAL, CARLA PythonAPI, ...) is cloned or linked locally.
+/third_party/*
+!/third_party/patches/
+
+# Scratch output
+/tmp/
 
 # Generated experiment outputs (results_paper/ also holds the figure scripts,
 # which are tracked, so ignore the products rather than the directory)

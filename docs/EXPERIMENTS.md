@@ -168,19 +168,3 @@ Retraining writes to `data/perturbation_train_{model}/` and
 shipped checkpoints are never overwritten. Point an evaluation at a retrained
 network with `test/run_eval.py --checkpoint <path>`.
 
-### Target rotation
-
-The shift attack translates the target and rotates it by `attack_opts["rotation"]`.
-Every case in the shipped `lidar_shift.pkl` stores `0.0`, so the published
-perception numbers are translation-only. The generators now sample +/-10 degrees
-(`mvp/attack/shift_rotation.py`), but the data is unchanged, so results stay
-identical until the cases **and then** the cache are regenerated, in that order.
-Regenerating cases without the cache leaves the two inconsistent: the boxes carry
-a yaw the rendered points do not.
-
----
-
-## Reproduction status
-
-What has and has not been reproduced, including where measurements disagree with
-the paper, is recorded in [../README.md](../README.md#reproduction-status).

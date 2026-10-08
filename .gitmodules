@@ -14,3 +14,4 @@
 [submodule "third_party/V2X-Real"]
 	path = third_party/V2X-Real
 	url = https://github.com/ucla-mobility/V2X-Real.git
+	ignore = all
